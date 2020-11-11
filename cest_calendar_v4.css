@@ -119,23 +119,27 @@ td:empty {
   font-size: 25px;
   z-index: 20;
 }
-li{
-  list-style-type: none;
-}
-form{
-  margin-top: 3rem;
-  line-height: 2rem;
-  margin-left: 1rem;
-}
+
+
 input[type=text]{
   border: none;
   border-radius: 10px;
   box-shadow:0 0 15px 4px rgba(0,0,0,0.06);
 }
-#todo_items{
 
-}
 button{
   border:none;
   border-radius: 10px;
+}
+#todo_title{
+  font-weight: bold;
+  font-size: large;
+  line-height: 4rem;
+  text-align: center;
+}
+ 
+
+ul{
+  margin-block-start: 2rem;
+  margin-left: 2rem;
 }

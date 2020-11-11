@@ -37,6 +37,7 @@
                     $print_month = date('F', mktime(0, 0, 0, $month, 01, $year));/*顯示用的月份*/
                     $date_current = date('D');
                     $day_current = date('d');
+                    $today= mktime(0,0,0,$month,$day_current,$year);
 
                     ?>
 
@@ -111,7 +112,12 @@
                                                             if ($i == 0 and $j < $date) {
                                                             } else if ($i * 7 + ($j + 1) - $date > $days) {
                                                             } else {
-                                                                echo ($i * 7 + ($j + 1) - $date);
+                                                                $calendar_days= ($i * 7 + ($j + 1) - $date);
+                                                                if ($calendar_days == $day_current){
+                                                                    echo "<span style='color:#E3A37D'>".$calendar_days."</span> ";
+                                                                }else{
+                                                                    echo $calendar_days;
+                                                                }
                                                             }
                                                             echo "</td>";
                                                         }
@@ -124,42 +130,52 @@
 
                 </div>
 
-                <div class="col-4 right ">
-                    <ul class="list-unstyled">
-                        <form action="cest_calendar_v4.php" method="post" class="form-inline">
-                            <span>Add New To-Do Item!</span>
+                <div class="col-4 right position-relative ">
+                
+                    <ul class="list-unstyled postion-absolute add-item-form ">
+                        <form action="cest_calendar_v4.php" method="post" class="form-inline ">
+                        <span class="" id="todo_title">Add New To-Do Item!</span>
                             <li class="todo"><input type="text" name="item" required></li><br>
-                            <button type="submit" id="sbmt" class="mx-auto">Submit</button>
+                            <button type="submit" id="sbmt" class="mx-auto"><i class="fas fa-plus"></i></button>
                     </ul>
                     
                     </form>
                     <?php
                     $dsn = "mysql:host=localhost; dbname=todo; charset=utf8";
                     $pdo = new pdo($dsn, 'root', '');
-
-
+                    
+                 
+                    /* add new row to item if receive data from the form */
                     if (isset($_POST["item"])) {
                         $do_it = $_POST["item"];
                         $insert_into_todo = "insert into `bulletin`(`item`) values('$do_it')";
                         $result = $pdo->query($insert_into_todo)->fetch();
                     }
+                    if (isset ($_POST["delete"])){
+                        $delete_do_it=$_POST["delete"];
+                        $delete_todo_sql="delete from `bulletin` where `id`= '$delete_do_it'";
+                        $delete_result=$pdo->exec($delete_todo_sql);
+                    } 
+                    
+            
 
-
-                    $things = "select `item` from `bulletin`";
+                    $things = "select `id`, `item` from `bulletin`";
                     $dos = $pdo->query($things)->fetchAll();
 
+
+                    /* echo all items so far (including the one just added) */
                     foreach ($dos as $do) {
                         echo "<form action='cest_calendar_v4.php' method='post'>";
                         echo "<ul class='list-unstyled' id='todo_items'>";
-                        echo "<li class='todo'>{$do['item']}&nbsp;<button type='submit' id='delete-btn' name='delete'>delete</a></button></li>";
+                        echo "<li class='todo'>{$do['item']}&nbsp;
+                        <button type='submit' name='delete' value='{$do['id']}'><i class='fas fa-minus'></i></button></li>";
                         echo "</ul>";
                         echo "</form>";
                     } 
-                    
-                    if (isset ($_POST["delete"])){
-                        $delete_do_it=$_POST["delete"];
-                        $delete_todo_sql="delete from `todo` "
-                    }
+               
+                 /* 
+                    $delete_todo_sql="delete from `bulletin` where `id`= '{$do['id']}'";
+                        $delete_result=$pdo->exec($delete_todo_sql); */
 
 
 
