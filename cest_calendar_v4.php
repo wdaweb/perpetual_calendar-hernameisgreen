@@ -4,21 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>calendar:final version</title>
+    <title>cest_calendar_v2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/d4ac8916dc.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="cest_calendar_v4.css">
 </head>
 
 <body>
-    <video autoplay mute loop id="subway-background">
+    <!--     <video autoplay mute loop id="subway-background">
         <source src="subway.mp4">
-    </video>
+    </video> -->
+
     <div class=" d-flex align-items-center justify-content-center min-vh-100 min-vw-100">
-        <div class="container d-flex align-items-center h-100 " >
+        <div class="container d-flex align-items-center h-100 ">
 
             <div class="row shadow my-auto">
-                <div class="col-8 left">
+                <div class="col-8 left ">
                     <?php
                     if (isset($_GET['year'])) {
                         $year = $_GET['year'];
@@ -123,12 +124,54 @@
 
                 </div>
 
-                <div class="col-4 right">
-                    <div class="right-title"><?= $date_current ?>&nbsp;<?= $day_current ?></div>
+                <div class="col-4 right ">
+                    <ul class="list-unstyled">
+                        <form action="cest_calendar_v4.php" method="post" class="form-inline">
+                            <span>Add New To-Do Item!</span>
+                            <li class="todo"><input type="text" name="item" required></li><br>
+                            <button type="submit" id="sbmt" class="mx-auto">Submit</button>
+                    </ul>
+                    
+                    </form>
+                    <?php
+                    $dsn = "mysql:host=localhost; dbname=todo; charset=utf8";
+                    $pdo = new pdo($dsn, 'root', '');
+
+
+                    if (isset($_POST["item"])) {
+                        $do_it = $_POST["item"];
+                        $insert_into_todo = "insert into `bulletin`(`item`) values('$do_it')";
+                        $result = $pdo->query($insert_into_todo)->fetch();
+                    }
+
+
+                    $things = "select `item` from `bulletin`";
+                    $dos = $pdo->query($things)->fetchAll();
+
+                    foreach ($dos as $do) {
+                        echo "<form action='cest_calendar_v4.php' method='post'>";
+                        echo "<ul class='list-unstyled' id='todo_items'>";
+                        echo "<li class='todo'>{$do['item']}&nbsp;<button type='submit' id='delete-btn' name='delete'>delete</a></button></li>";
+                        echo "</ul>";
+                        echo "</form>";
+                    } 
+                    
+                    if (isset ($_POST["delete"])){
+                        $delete_do_it=$_POST["delete"];
+                        $delete_todo_sql="delete from `todo` "
+                    }
+
+
+
+                  
+
+
+                    
+                
+                    ?>
                 </div>
 
             </div>
-
         </div>
     </div>
 </body>
