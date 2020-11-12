@@ -11,9 +11,9 @@
 </head>
 
 <body>
-    <!--     <video autoplay mute loop id="subway-background">
+        <video autoplay mute loop id="subway-background">
         <source src="subway.mp4">
-    </video> -->
+    </video>
 
     <div class=" d-flex align-items-center justify-content-center min-vh-100 min-vw-100">
         <div class="container d-flex align-items-center h-100 ">
