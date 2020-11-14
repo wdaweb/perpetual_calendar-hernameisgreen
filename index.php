@@ -133,7 +133,7 @@
                 <div class="col-4 right position-relative ">
                 
                     <ul class="list-unstyled postion-absolute add-item-form ">
-                        <form action="cest_calendar_v4.php" method="post" class="form-inline ">
+                        <form action="index.php" method="post" class="form-inline ">
                         <span class="" id="todo_title">Add New To-Do Item!</span>
                             <li class="todo"><input type="text" name="item" required></li><br>
                             <button type="submit" id="sbmt" class="mx-auto"><i class="fas fa-plus"></i></button>
@@ -141,12 +141,13 @@
                     
                     </form>
                     <?php
-                    $dsn = "mysql:host=localhost; dbname=todo; charset=utf8";
+                   /* 線上展示版先暫停資料表功能,改以SESSION陣列來代替
+                     $dsn = "mysql:host=localhost; dbname=todo; charset=utf8";
                     $pdo = new pdo($dsn, 'root', '');
-                    
+                     */
                  
                     /* add new row to item if receive data from the form */
-                    if (isset($_POST["item"])) {
+                    /* if (isset($_POST["item"])) {
                         $do_it = $_POST["item"];
                         $insert_into_todo = "insert into `bulletin`(`item`) values('$do_it')";
                         $result = $pdo->query($insert_into_todo)->fetch();
@@ -160,12 +161,54 @@
             
 
                     $things = "select `id`, `item` from `bulletin`";
-                    $dos = $pdo->query($things)->fetchAll();
+                    $dos = $pdo->query($things)->fetchAll(); */
 
+                    //功能展示用的臨時性陣列,使用session在瀏灠期間模擬資料表的功能;
+                    session_start();
+
+                    //如果server中沒有$_SESSION['dos']這個陣列,則先建立這個陣列,如果這個暫時性的陣列已存在,則不做任何事
+                    if(empty($_SESSION['dos'])){
+                        $_SESSION['dos']=[
+                            [
+                                'id'=>1,
+                                'item'=>'buy lucky charms',
+                                'date'=>'2020-11-12 00:09:09'
+                            ],
+                            [
+                                'id'=>2,
+                                'item'=>'watch taskmaster',
+                                'date'=>'2020-11-12 00:10:24'
+                            ],
+                            [
+                                'id'=>3,
+                                'item'=>'learn php',
+                                'date'=>'2020-11-12 00:10:29'
+                            ],
+                        ];
+                     }
+                    //如果有收到POST的新增動作，則將資料加到陣列中，隨後的迴圈會將資料顯示出來
+                    if (isset($_POST["item"])) {
+                        $do_it = $_POST["item"];
+                        //根據SESSION的資料數量來計算id值
+                        $id=count($_SESSION['dos'])+1;
+                        array_push($_SESSION['dos'],['id'=>$id,'item'=>$_POST['item'],'date'=>date("Y-m-d H:i:s")]);
+                    }
+
+                    //如果有收到POST的刪除動作，則將資料從陣列中移除，隨後的迴圈將不顯示已刪除的資料
+                    if (isset ($_POST["delete"])){
+                        $delete_do_it=$_POST["delete"];
+
+                        //使用迴圈在SESSION陣列中找id符合要刪除的id資料,然後利用array_splice()函數來從SESSION陣列中移除該筆資料
+                        foreach($_SESSION['dos'] as $key => $item){
+                            if($item['id']==$_POST['delete']){
+                                array_splice($_SESSION['dos'],$key,1);
+                            }
+                        }
+                    } 
 
                     /* echo all items so far (including the one just added) */
-                    foreach ($dos as $do) {
-                        echo "<form action='cest_calendar_v4.php' method='post'>";
+                    foreach ($_SESSION['dos'] as $do) {
+                        echo "<form action='index.php' method='post'>";
                         echo "<ul class='list-unstyled' id='todo_items'>";
                         echo "<li class='todo'>{$do['item']}&nbsp;
                         <button type='submit' name='delete' value='{$do['id']}'><i class='fas fa-minus'></i></button></li>";
